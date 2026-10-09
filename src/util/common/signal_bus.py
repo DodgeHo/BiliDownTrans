@@ -63,6 +63,12 @@ class SignalBus:
 
         start_next_task = Signal()
 
+    class Transcribe(QObject):
+        enqueue_completed_downloads = Signal(list)
+        tasks_changed = Signal()
+        task_updated = Signal(object)
+        schedule = Signal()
+
     class Login(QObject):
         # 用于登录相关的信号
         start_server = Signal()
@@ -83,6 +89,7 @@ class SignalBus:
         self.toast = self.ToastNotification()
         self.parse = self.Parse()
         self.download = self.Download()
+        self.transcribe = self.Transcribe()
         self.login = self.Login()
         self.update = self.Update()
         self.interface = self.Interface()

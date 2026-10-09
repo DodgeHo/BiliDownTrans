@@ -77,7 +77,7 @@ class FileNameFormatter:
         if not isinstance(value, str):
             return value
 
-        return re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", value)
+        return re.sub(r'[<>:"/\\|?*\x00-\x1f\s]+', "", value)
 
     def __normalize_path(self, path_str: str):
         if not path_str:

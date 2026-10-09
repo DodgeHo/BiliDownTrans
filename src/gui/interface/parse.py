@@ -119,7 +119,7 @@ class ParseInterface(QFrame):
         self.batch_select_btn.setFixedSize(28, 28)
 
         self.download_option_btn = TransparentToolButton(ExtendedFluentIcon.OPTIONS, self)
-        self.download_option_btn.setToolTip(self.tr("Download Options"))
+        self.download_option_btn.setToolTip("高级下载")
         self.download_option_btn.setFixedSize(28, 28)
 
         self.parse_list = ParseTreeView(self.main_window, parent = self)
@@ -134,7 +134,7 @@ class ParseInterface(QFrame):
         self.progress_widget = ProgressTipWidget(self)
         self.progress_widget.hide()
 
-        self.download_btn = PrimaryPushButton(text = self.tr("Download Selected Items"), parent = self)
+        self.download_btn = PrimaryPushButton(text = "立即下载", parent = self)
         self.download_btn.setMinimumWidth(120)
         self.download_btn.setEnabled(False)
 
@@ -374,14 +374,14 @@ class ParseInterface(QFrame):
         if not self.check_preview_info():
             return
 
-        if config.get(config.show_download_options_dialog):
-            dialog = self.show_download_options_dialog()
+        self._create_download_tasks()
 
-            if not dialog.exec():
-                return
-
-        # 获取选中的下载项    
+    def _create_download_tasks(self):
+        # 获取选中的下载项
         checked_episodes_list = self.parse_list.get_checked_items(to_dict = True, mark_as_downloaded = True)
+
+        if not checked_episodes_list:
+            return
 
         runtime.naming.current_starting_number = 1
 
@@ -401,7 +401,9 @@ class ParseInterface(QFrame):
             return
         
         dialog = self.show_download_options_dialog()
-        dialog.exec()
+
+        if dialog.exec():
+            self._create_download_tasks()
 
     def on_search(self):
         from ..dialog.misc.search import SearchDialog

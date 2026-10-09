@@ -27,7 +27,7 @@ class MainWindow(MSFluentWindow):
 
         self.resize(950, 600)
         self.setMinimumSize(950, 600)
-        self.setWindowTitle("Bili23 Downloader")
+        self.setWindowTitle("BiliDownTrans")
         self.setWindowIcon(QIcon(":/bili23/icon/app.svg"))
         self.setObjectName("MainWindow")
 
@@ -66,13 +66,21 @@ class MainWindow(MSFluentWindow):
         from gui.component.widget.avatar import NavigationLargeAvatarWidget
 
         self.parse_interface = ParseInterface(self)
-        self.parse_btn = self.addSubInterface(self.parse_interface, FluentIcon.SEARCH, self.tr("Parser"), position = NavigationItemPosition.TOP)
+        self.parse_btn = self.addSubInterface(self.parse_interface, FluentIcon.DOWNLOAD, "下载", position = NavigationItemPosition.TOP)
 
         # 先创建导航栏按钮，后续再添加界面
         self.download_btn = self.navigationInterface.addItem(
             "DownloadInterface",
-            FluentIcon.DOWNLOAD,
-            self.tr("Downloads"),
+            ExtendedFluentIcon.LIST,
+            "下载列表",
+            selectable = True,
+            position = NavigationItemPosition.TOP
+        )
+
+        self.transcribe_btn = self.navigationInterface.addItem(
+            "TranscribeInterface",
+            ExtendedFluentIcon.SUBTITLES,
+            "转录",
             selectable = True,
             position = NavigationItemPosition.TOP
         )
@@ -127,10 +135,13 @@ class MainWindow(MSFluentWindow):
         from qfluentwidgets import Flyout
 
         from .download import DownloadInterface
+        from .transcribe import TranscribeInterface
 
         self.download_interface = DownloadInterface(self)
+        self.transcribe_interface = TranscribeInterface(self)
 
         self._addSubInterface(self.download_interface)
+        self._addSubInterface(self.transcribe_interface)
 
         self.system_tray_icon = SystemTrayIcon(self)
         self.system_tray_icon.show()
@@ -178,6 +189,7 @@ class MainWindow(MSFluentWindow):
 
         self.parse_btn.clicked.connect(lambda: self.update_route_key("ParseInterface"))
         self.download_btn.clicked.connect(lambda: self.update_route_key("DownloadInterface"))
+        self.transcribe_btn.clicked.connect(lambda: self.update_route_key("TranscribeInterface"))
         self.setting_btn.clicked.connect(lambda: self.update_route_key("SettingInterface"))
         self.setting_btn.clicked.connect(self.ensure_setting_interface)
 
@@ -214,6 +226,7 @@ class MainWindow(MSFluentWindow):
         from util.auth.user import user_manager
         from util.download.downloader.manager import downloader_manager
         from util.download.task.manager import task_manager
+        from util.transcribe.manager import transcribe_task_manager
         from util.thread.async_ import AsyncTask
 
         if not self.on_close():
@@ -229,6 +242,7 @@ class MainWindow(MSFluentWindow):
         # 先让后台工作真正停下来，再去等线程退出。分片线程阻塞在 socket 读上，
         # 不关掉会话的话，safe_quit 的等待预算会全部耗在读超时上
         downloader_manager.shutdown()
+        transcribe_task_manager.shutdown()
 
         # 账号信息的重试定时器必须赶在 safe_quit 之前停掉：它此刻若触发，
         # 会在关停过程中拉起一个新的请求线程，并把结果投递给已经开始析构的主窗口
@@ -449,7 +463,7 @@ class MainWindow(MSFluentWindow):
         from qfluentwidgets import MessageBox
 
         dialog = MessageBox(
-            title = self.tr("Welcome to Bili23 Downloader"),
+            title = "Welcome to BiliDownTrans",
             content = self.tr("It is recommended to read the user guide and FAQs when using for the first time, to help you get started quickly and make full use of all features."),
             parent = self
         )

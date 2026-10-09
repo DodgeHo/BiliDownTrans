@@ -4,6 +4,7 @@ from ...common.enum import DownloadStatus, DownloadType, OriginalFileType, Toast
 from ...common.io.file import safe_remove, safe_rename
 from ...common.timestamp import get_timestamp
 from ...common.signal_bus import signal_bus
+from ...common.config import config
 from ...common.translator import Translator
 from ..task.options import resolve
 
@@ -370,6 +371,8 @@ class Merger(QObject):
 
         signal_bus.download.auto_manage_concurrent_downloads.emit()
         signal_bus.download.add_to_completed_list.emit([self.task_info])
+        if config.get(config.auto_transcribe_after_download):
+            signal_bus.transcribe.enqueue_completed_downloads.emit([self.task_info])
         signal_bus.download.remove_from_downloading_list.emit(self.task_info)
 
     def get_keep_original_file_type(self):

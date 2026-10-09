@@ -1,7 +1,7 @@
 [project]
-name = "bili23-downloader"
-version = "2.20.0"
-description = "开源、免费、跨平台的 B 站视频下载工具，支持多线程加速、音视频分离、弹幕元数据获取、自定义命名与分类等功能。Open Source, Free, Cross-Platform Bilibili Video Downloader."
+name = "bilidowntrans"
+version = "0.1.0"
+description = "BiliDownTrans 是基于 Bili23 Downloader 改造的 B 站下载与 GPU 转录流水线工具。"
 readme = "README.md"
 license = "GPL-3.0"
 requires-python = ">=3.11"
@@ -13,6 +13,8 @@ dependencies = [
     "protobuf==7.35.1",
     "httpx==0.28.1",
     "psutil==7.2.2",
+    "faster-whisper==1.2.1",
+    "huggingface_hub==0.36.2",
 ]
 authors = [
     {name = "ScottSloan", email = "world1019@sina.com"},

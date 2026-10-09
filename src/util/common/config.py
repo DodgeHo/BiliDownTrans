@@ -309,13 +309,13 @@ class DefaultValue:
 
 class APPConfig(QConfig):
     # APP
-    app_name = "Bili23 Downloader"
-    app_version = "2.20.0"
-    app_comparable_version = "2.20.0"
+    app_name = "BiliDownTrans"
+    app_version = "0.1.0"
+    app_comparable_version = "0.1.0"
     # 配置格式版本。**改动必须在 patch_config 里加对应的门禁并把它 +1**，
     # 否则已有用户配置里那份副本永远不会被更新（DefaultValue 只在配置文件不存在时
     # 作为初值）。与 app_version 不要求逐字对应
-    app_config_version = 2200
+    app_config_version = 2202
     config_version = ConfigItem("Application", "config_version", app_config_version)
 
     # Interface
@@ -358,6 +358,16 @@ class APPConfig(QConfig):
     download_parallel = RangeConfigItem("Download", "download_parallel", 1, RangeValidator(1, 10))
     speed_limit_enabled = ConfigItem("Download", "speed_limit_enabled", False, BoolValidator())
     speed_limit_rate = ConfigItem("Download", "speed_limit_rate", 10.0)
+
+    # Transcribe
+    auto_transcribe_after_download = ConfigItem("Transcribe", "auto_transcribe_after_download", True, BoolValidator())
+    transcribe_tool_dir = ConfigItem("Transcribe", "transcribe_tool_dir", "")
+    transcribe_python_path = ConfigItem("Transcribe", "transcribe_python_path", "")
+    transcribe_script_path = ConfigItem("Transcribe", "transcribe_script_path", "")
+    transcribe_model_path = ConfigItem("Transcribe", "transcribe_model_path", "")
+    transcribe_model_repo = ConfigItem("Transcribe", "transcribe_model_repo", "Systran/faster-whisper-large-v3")
+    transcribe_language = ConfigItem("Transcribe", "transcribe_language", "zh")
+    transcribe_parallel = RangeConfigItem("Transcribe", "transcribe_parallel", 1, RangeValidator(1, 4))
 
     # 任务级自动重试（Issue #469）。只对网络类可重试错误生效，403/404 这类永久错误
     # 仍直接进终态，因此默认开启是安全的 —— 网络差的用户不必先去设置里找开关。
@@ -594,6 +604,26 @@ def patch_config(config_version: int, data: dict):
 
             logger.info("已从海外 CDN 服务器列表中移除 Akamai")
 
+    if config_version < 2201:
+        # 新增下载后自动转录流水线配置。显式写入一次，保证旧配置文件升级后
+        # 也能在磁盘上带着完整默认项，后续无需依赖 QConfig 的运行期默认值。
+        config.set(config.auto_transcribe_after_download, True, save = False)
+        config.set(config.transcribe_tool_dir, r"E:\音频视频转字幕GPU_新版", save = False)
+        config.set(config.transcribe_python_path, r"E:\音频视频转字幕GPU_新版\.venv\Scripts\python.exe", save = False)
+        config.set(config.transcribe_script_path, r"E:\音频视频转字幕GPU_新版\transcribe_large_v3.py", save = False)
+        config.set(config.transcribe_model_path, r"E:\音频视频转字幕GPU_新版\models\faster-whisper-large-v3", save = False)
+        config.set(config.transcribe_language, "zh", save = False)
+        config.set(config.transcribe_parallel, 1, save = False)
+
+    if config_version < 2202:
+        # BiliDownTrans 内置转录入口，不再默认依赖外部 E: 工具目录。模型目录留空时
+        # 运行期会自动下载 Systran/faster-whisper-large-v3 到应用数据目录。
+        config.set(config.transcribe_tool_dir, "", save = False)
+        config.set(config.transcribe_python_path, "", save = False)
+        config.set(config.transcribe_script_path, "", save = False)
+        config.set(config.transcribe_model_path, "", save = False)
+        config.set(config.transcribe_model_repo, "Systran/faster-whisper-large-v3", save = False)
+
     # 完成修补，写入新的 config_version
     config.set(config.config_version, config.app_config_version)
     config.save()
@@ -602,7 +632,7 @@ config = APPConfig()
 config.themeMode.value = Theme.AUTO
 
 appdata_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
-config_path = Path(appdata_path) / "Bili23 Downloader" / "config.json"
+config_path = Path(appdata_path) / "BiliDownTrans" / "config.json"
 
 if not config_path.exists():
     logger.warning("配置文件不存在，将创建新配置文件")

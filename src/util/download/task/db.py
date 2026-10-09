@@ -15,7 +15,7 @@ class TaskDatabase(Database):
     def __init__(self):
         super().__init__()
 
-        self.path = Path(appdata_path) / "Bili23 Downloader" / "task.db"
+        self.path = Path(appdata_path) / "BiliDownTrans" / "task.db"
         self.path.parent.mkdir(parents = True, exist_ok = True)
 
         self.check_and_create_table()

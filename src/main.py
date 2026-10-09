@@ -87,7 +87,7 @@ import os
 
 appdata_path = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.AppDataLocation)
 
-log_path = Path(appdata_path) / "Bili23 Downloader" / "logs" / "app.log"
+log_path = Path(appdata_path) / "BiliDownTrans" / "logs" / "app.log"
 log_path.parent.mkdir(parents = True, exist_ok = True)
 
 class CompactLogFormatter(logging.Formatter):
@@ -382,7 +382,7 @@ class Application(QApplication):
             self.app_mutex_handle = self._msw_create_mutex(APP_MUTEX_NAME)
 
     def init_single_instance(self):
-        lock_path = Path(appdata_path) / "Bili23 Downloader" / "locks" / INSTANCE_LOCK_NAME
+        lock_path = Path(appdata_path) / "BiliDownTrans" / "locks" / INSTANCE_LOCK_NAME
 
         lock_path.parent.mkdir(parents = True, exist_ok = True)
 
@@ -521,9 +521,9 @@ class Application(QApplication):
         # 注意：AppDataLocation 会拼接 application_name，这里必须晚于模块导入期
         # （main.py 与 util/common/config.py 中的 appdata_path 均在导入期取值），
         # 否则用户数据目录会平移一层。
-        self.setApplicationName("Bili23 Downloader")
-        self.setApplicationDisplayName("Bili23 Downloader")
-        self.setDesktopFileName("bili23-downloader")
+        self.setApplicationName("BiliDownTrans")
+        self.setApplicationDisplayName("BiliDownTrans")
+        self.setDesktopFileName("bilidowntrans")
 
         # 设置默认字体
         self.default_font = self.font()

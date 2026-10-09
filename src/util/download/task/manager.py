@@ -242,8 +242,8 @@ class TaskManager:
 
         for title in title_list:
             if title in episode_info:
-                # 过滤文件系统非法字符
-                episode_info[title] = re.sub(r'[\/\\\:\*\?\"\<\>\|]', '_', episode_info.get(title, ""))
+                # 过滤文件系统非法字符和空白，默认以紧凑视频名落盘。
+                episode_info[title] = re.sub(r'[<>:"/\\|?*\x00-\x1f\s]+', "", episode_info.get(title, ""))
 
     def __get_number(self, episode_info: dict = None):
         # 调用方已持有 _numbering_lock
