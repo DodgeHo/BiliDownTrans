@@ -44,6 +44,26 @@ Get-ChildItem -LiteralPath $appDir -Recurse -Force -Directory | Where-Object {
     $_.Name -in @("__pycache__", ".pytest_cache", ".ruff_cache")
 } | Remove-Item -Recurse -Force
 
+$cscCandidates = @(
+    (Get-Command csc -ErrorAction SilentlyContinue).Source,
+    "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe",
+    "$env:WINDIR\Microsoft.NET\Framework\v4.0.30319\csc.exe"
+)
+$csc = $cscCandidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+
+if ($csc) {
+    & $csc /nologo /target:winexe `
+        "/win32icon:$(Join-Path $root 'assets\pipeline_icon.ico')" `
+        "/out:$(Join-Path $appDir 'BiliDownTrans.exe')" `
+        (Join-Path $root "launcher\BiliDownTransLauncher.cs")
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to build BiliDownTrans.exe launcher"
+    }
+} else {
+    Write-Warning "csc.exe not found; portable package will only include BiliDownTransLauncher.cmd"
+}
+
 if (Test-Path -LiteralPath $zipPath) {
     Remove-Item -LiteralPath $zipPath -Force
 }
