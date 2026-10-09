@@ -25,17 +25,23 @@ class AboutDialog(DialogBase):
 
         self.app_version_lab = BodyLabel(self.tr("Version {app_version}").format(app_version = app_version), self)
         self.qt_version_lab = BodyLabel(self.tr("Powered by Qt {qt_version} and QFluentWidgets {qfluentwidgets_version}").format(qt_version = qVersion(), qfluentwidgets_version = __version__), self)
-        self.license_lab = BodyLabel(self.tr("This software is free and open-source, licensed under the GNU General Public License v3 (GPLv3)."))
-        self.copyright_lab = BodyLabel(self.tr("Copyright © 2022-{year} Scott Sloan. All Rights Reserved.").format(year = year))
+        self.license_lab = BodyLabel("基于 Bili23 Downloader 与 faster-whisper 构建的下载转录流水线，按 GPLv3 开源。")
+        self.license_lab.setWordWrap(True)
+        self.copyright_lab = BodyLabel(
+            "Copyright © 2022-{year} Scott Sloan and BiliDownTrans contributors. "
+            "Bili23 Downloader: GPLv3; faster-whisper/CTranslate2/PyStand: MIT."
+            .format(year = year)
+        )
+        self.copyright_lab.setWordWrap(True)
 
-        self.sponsor_lab = BodyLabel(self.tr("If this project saved you time or solved your problem, consider buying the author a coffee! Don't forget to star the repository on GitHub to support open-source development."))
+        self.sponsor_lab = BodyLabel("BiliDownTrans 聚焦“下载完成后自动转录”：输入 B 站链接，下载视频，再用 large-v3 生成字幕和文本。")
         self.sponsor_lab.setWordWrap(True)
 
         self.terms_btn = TransparentPushButton(FluentIcon.DOCUMENT, self.tr("Terms of Use"), self)
         self.privacy_btn = TransparentPushButton(FluentIcon.CERTIFICATE, self.tr("Privacy Policy"), self)
-        self.documentation_btn = TransparentPushButton(FluentIcon.HELP, self.tr("Documentation"), self)
+        self.documentation_btn = TransparentPushButton(FluentIcon.HELP, "Release", self)
         self.github_btn = TransparentPushButton(FluentIcon.GITHUB, self.tr("Github"), self)
-        self.sponsor_btn = TransparentPushButton(FluentIcon.HEART, self.tr("Sponsor"), self)
+        self.sponsor_btn = TransparentPushButton(FluentIcon.HEART, "Upstream", self)
 
         content_layout = QVBoxLayout()
         content_layout.setContentsMargins(0, 0, 0, 0)
@@ -90,10 +96,10 @@ class AboutDialog(DialogBase):
         dialog.exec()
 
     def on_ducumation(self):
-        webbrowser.open("https://bili23.scott-sloan.cn/doc/introduction.html")
+        webbrowser.open("https://github.com/DodgeHo/BiliDownTrans/releases/latest")
 
     def on_github(self):
-        webbrowser.open("https://github.com/ScottSloan/Bili23-Downloader")
+        webbrowser.open("https://github.com/DodgeHo/BiliDownTrans")
 
     def on_sponsor(self):
-        webbrowser.open("https://bili23.scott-sloan.cn/doc/about.html")
+        webbrowser.open("https://github.com/ScottSloan/Bili23-Downloader")

@@ -1,112 +1,70 @@
-<p align="center">
-    <a href="https://bili23.scott-sloan.cn" target="_blank">
-        <img src="https://bili23.scott-sloan.cn/logo.png" alt="Bili23 Downloader" style="width: 500px;"/>
-    </a>
-</p>
+# BiliDownTrans
 
-<h1 align="center">Bili23-Downloader</h1>
+![BiliDownTrans](assets/pipeline_icon.svg)
 
-<p align="center">
-    🌐&nbsp;&nbsp;<span><b>简体中文</b></span>&nbsp;&nbsp;<a href="README_en.md"><span>English</span></a>
-</p>
+BiliDownTrans 是一个面向本地归档和字幕制作的 B 站下载转录流水线工具。它基于 [Bili23 Downloader](https://github.com/ScottSloan/Bili23-Downloader) 的下载、解析、任务队列、断点续传和 Fluent 桌面界面能力，并整合基于 [faster-whisper](https://github.com/SYSTRAN/faster-whisper) 与 `Systran/faster-whisper-large-v3` 的 GPU 转录流程。
 
-<p align="center">
-    <img src="https://img.shields.io/github/v/release/ScottSloan/Bili23-Downloader?style=flat-square" alt="Release"/>
-    <img src="https://img.shields.io/github/license/ScottSloan/Bili23-Downloader?style=flat-square" alt="License"/>
-    <img src="https://img.shields.io/github/downloads/ScottSloan/Bili23-Downloader/total?style=flat-square" alt="Downloads"/>
-    <img src="https://img.shields.io/github/stars/ScottSloan/Bili23-Downloader?style=flat-square" alt="Stars"/>
-    <img src="https://img.shields.io/github/actions/workflow/status/ScottSloan/Bili23-Downloader/publish.yml?style=flat-square" alt="Build"/>
-</p>
+项目目标很直接：输入 B 站链接，下载视频，然后把已下载视频排队转录成字幕和文本。下载和转录都长期保存任务列表，失败后可以重试，适合批量整理课程、访谈、播客、长视频素材和个人离线资料库。
 
-<div align="center">
-    <h3>
-        <a href="https://bili23.scott-sloan.cn/">项目官网</a>
-        <span> • </span>
-        <a href="https://bili23.scott-sloan.cn/doc/intro.html">说明文档</a>
-        <span> • </span>
-        <a href="#-下载地址">下载地址</a>
-    </h3>
-</div>
+[English](README_en.md) | [Release 下载](https://github.com/DodgeHo/BiliDownTrans/releases/latest)
 
-<div align="center">
-    <strong>开源、免费、跨平台的 B 站视频下载工具</strong><br>
-</div><br>
+## 核心功能
 
-<p align="center"><img src="https://bili23.scott-sloan.cn/main_interface_cn.png" alt="程序截图" style="width: 80%;"></p>
+| 功能 | 说明 |
+| --- | --- |
+| B 站解析与下载 | 继承 Bili23 Downloader 的投稿视频、番剧、课程、合集、收藏夹、空间、历史记录等解析能力。 |
+| 下载队列 | 支持任务排队、并发下载、暂停、重试、删除、断点续传和下载记录持久化。 |
+| 快速/高级下载 | 下载页提供“立即下载”和“高级下载”两个入口，既能快速入队，也能保留原有细项配置。 |
+| 文件命名 | 默认按视频标题保存，并删除 Windows 非法字符和空白字符，避免常见落盘失败。 |
+| 转录队列 | 下载完成的视频进入“转录”页，可手动开始、取消、重做、删除记录和打开目录。 |
+| 自动转录 | 默认开启“下载后自动转录”，下载完成后自动加入转录队列，并按视频路径去重。 |
+| 字幕/文本输出 | 输出 `.large-v3.raw.srt`、`.large-v3.优化断句.srt`、`.large-v3.txt`、词级 JSON 和质量报告。 |
+| 模型自动下载 | 首次转录时自动从 Hugging Face 下载 `Systran/faster-whisper-large-v3`，无需把 3GB 模型放进 Git。 |
 
-## ⚡ 程序特性
+## 下载与启动
 
-| 特性 | 详细说明 |
-| :--- | :--- |
-| 🖥️ **跨平台支持** | 完美兼容 **Windows**（含 Win 7）、**Linux** 和 **macOS** 三大桌面操作系统。 |
-| 🎨 **现代 UI 设计** | 基于 Fluent Design 设计语言，支持浅色 / 深色主题无缝切换，原生适配高分屏，并会记住窗口位置与大小，下次启动自动恢复。 | 
-| 🚀 **多线程与加速**| 原生集成多线程并行下载、断点续传及网络异常自动重试机制，提供极致的下载速率，同时支持全局下载限速。 |
-| 🔗 **多类型解析** | 全面支持：`投稿视频`、`番剧`、`电影`、`课程`、`互动视频`、`音乐（au/am）`、`UP主空间`、`收藏夹`、`每周必看`、`订阅合集`、`追番追剧`、`稍后再看`、`历史记录`等。 |
-| 🔍 **批量与检索** | 支持一次粘贴多条投稿视频链接**批量解析**；个人空间、收藏夹、历史记录与稍后再看支持**关键词搜索**（可选择只筛选当前页或搜索全部内容）；解析完成后还可按预设条件**自动勾选**下载项。 |
-| ⚙️ **音视频自定义**| **画质**：`8K`、`4K`、`HDR`、`杜比视界`等 <br>**音质**：`Hi-Res 无损`、`杜比全景声`等 <br>**编码**：`AVC`、`HEVC`、`AV1`<br>下载前可实时预览本次将要下载的媒体内容。 |
-| 💬 **弹幕与字幕** | **弹幕**：`xml`、`ass`、`json`<br>**字幕**：`srt`、`lrc`、`txt`、`ass`、`json`<br>支持自定义弹幕与字幕样式、指定字幕语言，并可将 `ass` 格式的弹幕和字幕嵌入 `mkv` 容器中。 |
-| 🖼️ **封面与章节**| 无损保存原图质量（`jpg`、`png`、`avif`、`webp`），原生支持将封面嵌入最终的视频文件（可选嵌入后删除原图），并支持写入视频的**章节信息**。 |
-| 🧩 **NFO 元数据** | 自动刮削并生成符合 **Kodi**、**Jellyfin**、**Emby** 等媒体中心标准格式的本地媒体元数据。 |
-| 📁 **分类与命名** | 内置强大规则引擎，可为投稿视频、番剧、课程、互动视频、收藏夹、个人空间、历史记录、稍后再看、每周必看、音乐等类型分别设置命名模板与多级目录分类存储模式。 |
-| 📦 **封装格式转化**| 智能音视频流混合提取，支持封装输出为 `mp4` 或 `mkv`，充分满足不同播放设备的兼容需求。 |
-| 🚫 **重复下载检测**| 自动记录下载历史，再次下载相同内容时给出提示并可直接跳过，避免重复占用带宽与磁盘空间。 |
-| 🌐 **网络与代理** | 支持**不使用代理**、**使用系统代理**、**手动设置**三种代理模式，可根据地理位置选择 CDN 节点以改善下载速度，并支持自定义 User-Agent 与 Host。 |
-| 📋 **剪贴板监控** | 自动识别复制到剪贴板中的 B 站链接，确认后即可直接进入解析下载流程。 |
-| 🌍 **国际化支持** | 内置多语言界面，开箱可用：简体中文、繁体中文、English。 |
-| 🔒 **账号安全登录**| 支持快捷安全的**扫码登录**、**短信验证登录**与 **Cookie 登录**。 |
-| 📖 **完全开源免费**| 基于 **GPL-3.0** 协议发布，代码完全开源、无内购、无广告，拥抱社区共建。 |
+1. 前往 [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest) 下载 `BiliDownTrans-v0.1.0-win-x64-portable.zip`。
+2. 解压到固定目录，例如 `D:\Apps\BiliDownTrans`。
+3. 双击 `BiliDownTrans.exe` 启动。
+4. 首次启动会自动创建 `.venv` 并安装依赖；首次转录会自动下载 large-v3 模型。
 
-## 📥 下载地址
+如果 `BiliDownTrans.exe` 被安全软件拦截，也可以运行同目录的 `BiliDownTransLauncher.cmd`。
 
-当前提供两种下载方式，可按使用场景选择：
+## 模型与 GPU
 
-- [**GitHub Releases**](https://github.com/ScottSloan/Bili23-Downloader/releases/latest) - 适合访问 GitHub 较稳定的用户，获取最新发布版本。
-- [**官网下载（国内用户推荐）**](https://bili23.scott-sloan.cn/doc/releases.html) - 适合国内用户，通常访问更快、更稳定。
+BiliDownTrans 不把模型提交到 Git LFS，也不把 3GB 模型塞进 Release。默认模型来自 Hugging Face：
 
-## 🪧 使用协议
-本项目仅供个人学习与研究用途，下载内容**仅限于个人非商业使用，严禁用于任何形式的商业目的、公开传播或分发**。  
-本软件仅基于用户账号的合法访问权限操作，**不会绕过任何付费墙或平台知识产权保护措施**。请勿将本软件用于批量抓取或任何违反目标平台服务条款的行为。  
+`Systran/faster-whisper-large-v3`
 
-**免责声明**：用户需完全自行承担使用本项目可能带来的所有风险（包括但不限于账号封禁、版权纠纷等）。项目开发者不对任何人因使用或无法使用本软件所引发的任何直接或间接法律纠纷、损害承担责任。  
+模型会缓存到应用数据目录下：
 
-继续使用即表示您已充分理解并同意遵守上述全部条款。
+`BiliDownTrans\models\faster-whisper-large-v3`
 
-## 🔑 开源许可
-本项目在 **GPLv3 License** 许可协议下进行发布。
+如果网络无法访问 Hugging Face，可以手动下载该模型，并在配置里指定本地模型目录。当前转录默认使用 `CUDA + float16`，需要 NVIDIA 显卡、驱动和可用 CUDA 运行环境；环境异常时任务会失败并保留记录，可修复后点击“重做”。
 
-wbi 签名、部分接口以及 buvid3 等参数生成参考 [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)  
+## 与上游项目的关系
 
-Windows 端启动器（`launcher/` 目录）fork 自 [skywind3000/PyStand](https://github.com/skywind3000/PyStand)（MIT 协议），并在此基础上做了应用源码内嵌、完整性校验等定制，详见 [launcher/README.md](launcher/README.md)  
+BiliDownTrans 是组合型新项目，不是从零重写：
 
-## 🛠️ 参与贡献
-欢迎提出新的点子~
+- 下载器基础来自 [Bili23 Downloader](https://github.com/ScottSloan/Bili23-Downloader)，保留其解析、下载、队列、SQLite 存储、命名规则、登录、封面/字幕/弹幕/元数据等成熟能力。
+- 转录能力基于 [faster-whisper](https://github.com/SYSTRAN/faster-whisper)、[CTranslate2](https://github.com/OpenNMT/CTranslate2) 和 `Systran/faster-whisper-large-v3` 模型。
+- Windows 启动器目录 `launcher/` 继承自 [PyStand](https://github.com/skywind3000/PyStand) 的思路；当前 portable 包额外提供一个轻量 `BiliDownTrans.exe` 启动器。
 
-<a href="https://github.com/ScottSloan/Bili23-Downloader/graphs/contributors" target="_blank">
-    <img src="https://contrib.rocks/image?repo=ScottSloan/Bili23-Downloader" alt="Contributors" style="width: 300px;"/>
-</a>
+感谢这些项目提供的基础工作。BiliDownTrans 在此之上聚焦“下载后自动转录”的一体化桌面工作流。
 
-Made with [contrib.rocks](https://contrib.rocks).
+## 使用协议与免责声明
 
-## 🌟 社区交流
-加入社区，获取项目最新动态、问题答疑和技术交流。
+本项目仅供个人学习、研究和个人资料整理使用。下载内容仅限个人非商业用途，严禁用于商业分发、公开传播、批量抓取或任何违反目标平台服务条款的行为。
 
-- [QQ 交流群](https://qm.qq.com/q/KX3uJIFIYK)
-- [QQ 频道](https://pd.qq.com/s/8941to1p0)
+本软件不会绕过付费墙或平台知识产权保护措施，只基于用户账号本身拥有的合法访问权限工作。用户需自行承担使用本项目可能带来的账号、版权、网络和硬件风险。
 
-> 如需提问，请提供**问题描述**、**完整日志**，以便我们更好地提供帮助。
+## 开源许可
 
-## 💪 支持作者
+本项目以 GPL-3.0 发布。上游与依赖项目的许可请分别参考其原仓库：
 
-本项目由开发者 [Scott Sloan](https://github.com/ScottSloan) 利用业余时间独立开发与维护，初衷是为大家提供纯粹、无广告且高效的 B 站本地下载工具。
+- Bili23 Downloader: GPL-3.0
+- faster-whisper: MIT
+- CTranslate2: MIT
+- PyStand: MIT
 
-> **⭐️ 点亮星标**  
-> 如果这款工具为你节省了宝贵的时间，欢迎在项目右上角为其点亮一颗 **Star**！  
-> 你的支持能让更多有需要的人看到这个项目，这也会成为作者持续更新的最大动力。
-
-### ☕️ 请作者喝杯咖啡
-
-除了日常的代码维护外，处理复杂的跨平台环境以及重构发布都耗费了大量的时间与精力。如果软件确实帮你解决了不少麻烦，欢迎通过下方的赞助码请作者喝杯咖啡。**这是对“为爱发电”最实在的认可！**
-
-<p align="center">
-    <img src="https://bili23.scott-sloan.cn/assets/sponsor_weixin.Bqpdl-if.png" alt="赞助二维码" style="width: 300px; margin: 10px 0; border-radius: 8px;" />
-</p>
+WBI 签名、部分接口以及 buvid3 等参数生成参考 [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)。

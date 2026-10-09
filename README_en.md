@@ -1,112 +1,70 @@
-<p align="center">
-    <a href="https://bili23.scott-sloan.cn" target="_blank">
-        <img src="https://bili23.scott-sloan.cn/logo.png" alt="Bili23 Downloader" style="width: 500px;"/>
-    </a>
-</p>
+# BiliDownTrans
 
-<h1 align="center">Bili23-Downloader</h1>
+![BiliDownTrans](assets/pipeline_icon.svg)
 
-<p align="center">
-    🌐&nbsp;&nbsp;<a href="README.md"><span>简体中文</span></a>&nbsp;&nbsp;<span><b>English</b></span>
-</p>
+BiliDownTrans is a desktop pipeline for downloading Bilibili videos and transcribing downloaded videos into subtitles and text. It builds on [Bili23 Downloader](https://github.com/ScottSloan/Bili23-Downloader) for parsing, downloading, task queues, resume support, SQLite persistence, and Fluent UI, then adds a GPU transcription workflow powered by [faster-whisper](https://github.com/SYSTRAN/faster-whisper) and `Systran/faster-whisper-large-v3`.
 
-<p align="center">
-    <img src="https://img.shields.io/github/v/release/ScottSloan/Bili23-Downloader?style=flat-square" alt="Release"/>
-    <img src="https://img.shields.io/github/license/ScottSloan/Bili23-Downloader?style=flat-square" alt="License"/>
-    <img src="https://img.shields.io/github/downloads/ScottSloan/Bili23-Downloader/total?style=flat-square" alt="Downloads"/>
-    <img src="https://img.shields.io/github/stars/ScottSloan/Bili23-Downloader?style=flat-square" alt="Stars"/>
-    <img src="https://img.shields.io/github/actions/workflow/status/ScottSloan/Bili23-Downloader/publish.yml?style=flat-square" alt="Build"/>
-</p>
+The goal is simple: paste a Bilibili URL, download the video, and queue the completed video for local transcription. Both download and transcription tasks are persisted, failed jobs can be retried, and the workflow is designed for courses, interviews, podcasts, long videos, and personal archives.
 
-<div align="center">
-    <h3>
-        <a href="https://bili23.scott-sloan.cn/">Official Website</a>
-        <span> • </span>
-        <a href="https://bili23.scott-sloan.cn/doc/intro.html">Documentation</a>
-        <span> • </span>
-        <a href="#-download">Download</a>
-    </h3>
-</div>
+[简体中文](README.md) | [Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest)
 
-<div align="center">
-    <strong>Open Source, Free, Cross-Platform Bilibili Video Downloader</strong><br>
-</div><br>
+## Features
 
-<p align="center"><img src="https://bili23.scott-sloan.cn/main_interface_en.png" alt="Program Screenshot" style="width: 80%;"></p>
+| Feature | Description |
+| --- | --- |
+| Bilibili parsing and download | Inherits Bili23 Downloader support for videos, bangumi, courses, collections, favorites, user spaces, history, and more. |
+| Download queue | Supports queued downloads, concurrency, pause, retry, delete, resume, and persistent task records. |
+| Quick/advanced download | The download page offers both immediate download and advanced options. |
+| File naming | Saves videos by title by default and removes Windows-invalid characters and whitespace. |
+| Transcription queue | Completed videos appear in the transcription page and can be started, canceled, retried, removed, or opened in Explorer. |
+| Auto transcription | Enabled by default; completed downloads are automatically added to the transcription queue with path-based deduplication. |
+| Subtitle/text output | Produces `.large-v3.raw.srt`, `.large-v3.优化断句.srt`, `.large-v3.txt`, word-level JSON, and a quality report. |
+| Automatic model download | Downloads `Systran/faster-whisper-large-v3` from Hugging Face on first transcription instead of storing a 3GB model in Git. |
 
-## ⚡ Features
+## Download and Start
 
-| Feature | Detailed Description |
-| :--- | :--- |
-| 🖥️ **Cross-Platform** | Fully compatible with **Windows** (including Win 7), **Linux**, and **macOS** desktop operating systems. |
-| 🎨 **Modern UI** | Based on Fluent Design, supports seamless light/dark theme switching and native High-DPI scaling. It also remembers the window position and size, restoring them on the next launch. | 
-| 🚀 **Multithreading & Acceleration**| Native integration of multi-threaded parallel downloading, breakpoint resuming, and automatic network error retries for extreme download speed, plus a global speed limit option. |
-| 🔗 **Multi-Type Parsing** | Fully supports: `Standard Videos`, `Bangumi`, `Movies`, `Courses`, `Interactive Videos`, `Audio (au/am)`, `User Space`, `Favorites`, `Weekly Must-Watch`, `Subscriptions`, `Watch Later`, `History`, etc. |
-| 🔍 **Batch & Search** | **Batch parsing** by pasting multiple standard video links at once; **keyword search** for User Space, Favorites, History, and Watch Later (filter the current page only, or search all pages); download items can also be **auto-selected** by preset conditions once parsing completes. |
-| ⚙️ **Media Customization**| **Video**: 8K, 4K, HDR, Dolby Vision <br>**Audio**: Hi-Res Lossless, Dolby Atmos <br>**Codec**: AVC, HEVC, AV1 <br>Preview exactly what will be downloaded before starting. |
-| 💬 **Danmaku & Subtitles** | **Danmaku**: `xml`, `ass`, `json` <br>**Subtitles**: `srt`, `lrc`, `txt`, `ass`, `json` <br>Customizable danmaku and subtitle styles, selectable subtitle languages, and `ass` danmaku/subtitles can be embedded into `mkv` containers. |
-| 🖼️ **Covers & Chapters**| Losslessly save covers (`jpg`, `png`, `avif`, `webp`), natively supports embedding posters directly into output video files (with an option to delete the original image afterwards), and can write video **chapter information**. |
-| 🧩 **NFO Metadata** | Automatically scrapes and generates local media metadata formats complying with standards of media centers like **Kodi**, **Jellyfin**, and **Emby**. |
-| 📁 **Classification & Naming** | Built-in powerful rule engine, with dedicated naming templates and multi-level directory classification modes for standard videos, bangumi, courses, interactive videos, favorites, user space, history, watch later, weekly must-watch, audio, and more. |
-| 📦 **Format Muxing**| Smart audio & video stream mixing/extraction, supports output format to `mp4` or `mkv` to fulfill broad device compatibility requirements. |
-| 🚫 **Duplicate Detection**| Download history is recorded automatically, so downloading the same content again raises a prompt and can be skipped outright, saving bandwidth and disk space. |
-| 🌐 **Network & Proxy** | Three proxy modes are available — **no proxy**, **system proxy**, and **manual configuration** — along with geolocation-based CDN node selection to improve download speed, and customizable User-Agent and Host. |
-| 📋 **Clipboard Monitoring** | Automatically detects Bilibili links copied to the clipboard and jumps straight into parsing and downloading after confirmation. |
-| 🌍 **i18n Support** | Built-in multi-language interface out of the box: Simplified Chinese, Traditional Chinese, and English. |
-| 🔒 **Secure Auth**| Supports quick and secure **QR Code Login**, **SMS Verification Login**, and **Cookie Login**. |
-| 📖 **Open Source & Free**| Released under the **GPL-3.0** License, fully open-source, no in-app purchases, no ads, embracing community contribution. |
+1. Download `BiliDownTrans-v0.1.0-win-x64-portable.zip` from [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest).
+2. Extract it to a stable folder, for example `D:\Apps\BiliDownTrans`.
+3. Run `BiliDownTrans.exe`.
+4. First launch creates a `.venv` and installs dependencies; first transcription downloads the large-v3 model.
 
-## 📥 Download
+If `BiliDownTrans.exe` is blocked by security software, run `BiliDownTransLauncher.cmd` in the same folder.
 
-Two download methods are available. Choose the one that fits your situation best:
+## Model and GPU
 
-- [**Go to GitHub Releases**](https://github.com/ScottSloan/Bili23-Downloader/releases/latest) - Recommended if GitHub is easily accessible for you, and you want the latest release.
-- [**Official Website Download (Recommended for users in China)**](https://bili23.scott-sloan.cn/doc/releases.html) - Recommended for users in China, usually faster and more stable to access.
+BiliDownTrans does not put the model in Git LFS or GitHub Release assets. The default model source is:
 
-## 🪧 Terms of Use
-This project is for personal learning and research purposes only. The downloaded content is **strictly for personal, non-commercial use, and any form of commercial use, public dissemination, or distribution is completely prohibited.**  
-This software operates solely based on the user's legal account access permissions and **will not bypass any paywalls or platform intellectual property protection measures.** Please do not use this software for batch scraping or any action that violates the target platform's terms of service.  
+`Systran/faster-whisper-large-v3`
 
-**Disclaimer**: Users must independently bear all risks associated with using this project (including but not limited to account bans, copyright disputes, etc.). The project developer assumes no responsibility for any direct or indirect legal disputes or damages caused by the use or inability to use this software.  
+The model is cached under the application data directory:
 
-By continuing to use this software, you indicate your full understanding and agreement to comply with all the above terms.
+`BiliDownTrans\models\faster-whisper-large-v3`
 
-## 🔑 Open Source License
-This project is released under the **GPLv3 License**.
+If Hugging Face is unreachable, download the model manually and configure the local model directory. Transcription currently defaults to `CUDA + float16`, so an NVIDIA GPU, working driver, and CUDA runtime are required. Failed tasks stay in the queue and can be retried after the environment is fixed.
 
-Wbi signature, specific APIs, and buvid3 generation parameters are inspired by [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect).
+## Upstream Projects
 
-The Windows launcher (`launcher/` directory) is forked from [skywind3000/PyStand](https://github.com/skywind3000/PyStand) (MIT License), with customizations such as embedded application source and integrity verification. See [launcher/README.md](launcher/README.md) for details.
+BiliDownTrans is an integration project, not a ground-up rewrite:
 
-## 🛠️ Contributors
-New ideas and pull requests are always welcome!
+- Downloading is based on [Bili23 Downloader](https://github.com/ScottSloan/Bili23-Downloader), including its parsing, downloading, queueing, SQLite storage, naming rules, authentication, covers, subtitles, danmaku, and metadata features.
+- Transcription is based on [faster-whisper](https://github.com/SYSTRAN/faster-whisper), [CTranslate2](https://github.com/OpenNMT/CTranslate2), and `Systran/faster-whisper-large-v3`.
+- The Windows launcher directory keeps the lineage of [PyStand](https://github.com/skywind3000/PyStand); the portable package also includes a small `BiliDownTrans.exe` launcher.
 
-<a href="https://github.com/ScottSloan/Bili23-Downloader/graphs/contributors" target="_blank">
-    <img src="https://contrib.rocks/image?repo=ScottSloan/Bili23-Downloader" alt="Contributors" style="width: 300px;"/>
-</a>
+Thanks to these upstream projects. BiliDownTrans focuses on the combined “download then transcribe” desktop workflow.
 
-Made with [contrib.rocks](https://contrib.rocks).
+## Terms and Disclaimer
 
-## 🌟 Community
-Join our community to get the latest updates, Q&A, and technical discussions.
+This project is for personal learning, research, and personal archiving only. Downloaded content must remain for personal non-commercial use. Do not use this project for commercial distribution, public redistribution, batch scraping, or any activity that violates platform terms.
 
-- [QQ Group](https://qm.qq.com/q/KX3uJIFIYK)
-- [QQ Channel](https://pd.qq.com/s/8941to1p0)
+The software does not bypass paywalls or intellectual-property protections. It operates only through the access permissions of the user account. Users are responsible for account, copyright, network, and hardware risks.
 
-> When asking questions, please provide the **problem description** and **complete logs** so we can assist you better.
+## License
 
-## 💪 Support the Author
+This project is released under GPL-3.0. See upstream repositories for their own licenses:
 
-This project is independently developed and maintained by [Scott Sloan](https://github.com/ScottSloan) in his spare time. The original intention is to provide everyone with a pure, ad-free, and efficient local Bilibili downloading tool.
+- Bili23 Downloader: GPL-3.0
+- faster-whisper: MIT
+- CTranslate2: MIT
+- PyStand: MIT
 
-> **⭐️ Leave a Star**  
-> If this tool has saved your precious time, please consider giving it a **Star** in the top right corner of the project!  
-> Your support helps more people discover this project and is the greatest motivation for continuous updates.
-
-### ☕️ Buy the Author a Coffee
-
-Besides routine code maintenance, handling complex cross-platform environments and refactoring releases take a massive amount of time and energy. If the software has indeed helped you, you are welcome to buy the author a coffee via the sponsor QR code below. **This is the most practical recognition of open-source dedication!**
-
-<p align="center">
-    <img src="https://bili23.scott-sloan.cn/assets/sponsor_weixin.Bqpdl-if.png" alt="Sponsor QR Code" style="width: 300px; margin: 10px 0; border-radius: 8px;" />
-</p>
+WBI signatures, selected API behavior, and buvid3-related parameters reference [SocialSisterYi/bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect).

@@ -14,6 +14,7 @@ from util.common.runtime import runtime
 from util.misc.macos import activate_app
 from util.thread.pool import GlobalThreadPoolTask
 
+from pathlib import Path
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,8 @@ class MainWindow(MSFluentWindow):
         self.resize(950, 600)
         self.setMinimumSize(950, 600)
         self.setWindowTitle("BiliDownTrans")
-        self.setWindowIcon(QIcon(":/bili23/icon/app.svg"))
+        icon_path = Path(__file__).resolve().parents[3] / "assets" / "pipeline_icon.ico"
+        self.setWindowIcon(QIcon(str(icon_path) if icon_path.exists() else ":/bili23/icon/app.svg"))
         self.setObjectName("MainWindow")
 
         self.current_route_key = "ParseInterface"
