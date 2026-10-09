@@ -39,6 +39,12 @@ class TranscribeRunner(QObject):
         self.process.setWorkingDirectory(self.output_dir)
 
         python_path = self.python_path or sys.executable
+
+        if python_path.lower().endswith("pythonw.exe"):
+            candidate = Path(python_path).with_name("python.exe")
+
+            if candidate.exists():
+                python_path = str(candidate)
         script_path = Path(self.script_path) if self.script_path else None
 
         if script_path and script_path.exists():
