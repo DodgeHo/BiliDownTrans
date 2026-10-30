@@ -54,6 +54,9 @@ sync.ps1
 /Lib
 /pyvenv.cfg
 
+# 启动器 exe：由 scripts/build_portable_release.ps1 用 csc 编译，属构建产物
+/BiliDownTrans.exe
+
 # portable 打包的中间目录（scripts/build_portable_release.ps1）
 /dist-portable
 
