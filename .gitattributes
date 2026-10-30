@@ -1,1 +1,7 @@
 src/res linguist-generated=false
+
+
+# 批处理必须按 CRLF 检出：cmd.exe 按字节定位正在执行的批处理，LF-only 换行
+# 会让它把下一行的开头接到本行末尾，命令被从中间截断
+*.cmd text eol=crlf
+*.bat text eol=crlf

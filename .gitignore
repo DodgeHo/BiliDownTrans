@@ -47,3 +47,23 @@ sync.ps1
 
 # playwright
 /.playwright-mcp
+
+# 误建在项目根目录的虚拟环境（真正的运行环境是 .venv，已在上方忽略）。
+# 名字与标准 venv 的顶层目录一致，一旦进仓库就是几百 MB 第三方库
+/Include
+/Lib
+/pyvenv.cfg
+
+# portable 打包的中间目录（scripts/build_portable_release.ps1）
+/dist-portable
+
+# WorkBuddy 的项目工作数据（日志与记忆），不是源码
+/.workbuddy
+
+# 误建在 scripts/ 下的虚拟环境启动脚本（真正的运行环境是 .venv）
+/scripts/activate
+/scripts/activate.bat
+/scripts/Activate.ps1
+/scripts/deactivate.bat
+/scripts/pip*.exe
+/scripts/python*.exe

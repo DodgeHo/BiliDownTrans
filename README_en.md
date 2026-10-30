@@ -23,7 +23,7 @@ The goal is simple: paste a Bilibili URL, download the video, and queue the comp
 
 ## Download and Start
 
-1. Download `BiliDownTrans-v0.1.0-win-x64-portable.zip` from [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest).
+1. Download `BiliDownTrans-v0.1.1-win-x64-portable.zip` from [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest).
 2. Extract it to a stable folder, for example `D:\Apps\BiliDownTrans`.
 3. Run `BiliDownTrans.exe`.
 4. First launch creates a `.venv` and installs dependencies; first transcription downloads the large-v3 model.

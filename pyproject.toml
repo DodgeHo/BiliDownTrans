@@ -1,6 +1,6 @@
 [project]
 name = "bilidowntrans"
-version = "0.1.0"
+version = "0.1.1"
 description = "BiliDownTrans 是基于 Bili23 Downloader 改造的 B 站下载与 GPU 转录流水线工具。"
 readme = "README.md"
 license = "GPL-3.0"
@@ -14,7 +14,16 @@ dependencies = [
     "httpx==0.28.1",
     "psutil==7.2.2",
     "faster-whisper==1.2.1",
+    # faster-whisper 只声明 av>=11，没有上限；av 19 移除了 av.open() 的
+    # metadata_errors 参数，而 faster_whisper/audio.py 仍在传它，装到新版会让转录子进程崩溃
+    "av==16.1.0",
     "huggingface_hub==0.36.2",
+    "verhub-sdk==0.2.10",
+    # Windows GPU 转录需要 cuBLAS 与 CUDA Runtime：ctranslate2 的 wheel 自带 cuDNN，
+    # 但不带这两个，官方要求本机装 CUDA Toolkit。改用 PyPI 的可再发行包，
+    # 由 transcribe/worker.py 的 _register_cuda_dll_dirs() 在加载 ctranslate2 前装入进程
+    "nvidia-cublas-cu12==12.9.2.10",
+    "nvidia-cuda-runtime-cu12==12.9.79",
 ]
 authors = [
     {name = "ScottSloan", email = "world1019@sina.com"},

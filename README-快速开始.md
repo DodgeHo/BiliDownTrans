@@ -4,7 +4,7 @@ BiliDownTrans 是基于 Bili23 Downloader 改造的 B 站下载与 GPU 转录流
 
 ## 使用方式
 
-1. 下载 `BiliDownTrans-v0.1.0-win-x64-portable.zip`。
+1. 下载 `BiliDownTrans-v0.1.1-win-x64-portable.zip`。
 2. 解压到一个固定目录，例如 `D:\Apps\BiliDownTrans`。
 3. 双击 `BiliDownTrans.exe` 启动。若被安全软件拦截，也可以运行 `BiliDownTransLauncher.cmd`。
 4. 在“下载”页输入 B 站视频链接并下载。

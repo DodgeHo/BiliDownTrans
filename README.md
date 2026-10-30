@@ -23,7 +23,7 @@ BiliDownTrans 是一个面向本地归档和字幕制作的 B 站下载转录流
 
 ## 下载与启动
 
-1. 前往 [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest) 下载 `BiliDownTrans-v0.1.0-win-x64-portable.zip`。
+1. 前往 [GitHub Releases](https://github.com/DodgeHo/BiliDownTrans/releases/latest) 下载 `BiliDownTrans-v0.1.1-win-x64-portable.zip`。
 2. 解压到固定目录，例如 `D:\Apps\BiliDownTrans`。
 3. 双击 `BiliDownTrans.exe` 启动。
 4. 首次启动会自动创建 `.venv` 并安装依赖；首次转录会自动下载 large-v3 模型。

@@ -193,6 +193,17 @@ class Updater(QObject):
         )
 
     def request_update(self, manual: bool):
+        # 启动时不再自动查更新。
+        #
+        # 这条更新通道是上游 Bili23-Downloader 的：VERHUB_PROJECT_KEY 登记的是
+        # 上游项目，而提交的 current_version 是本项目的版本号（0.1.0）。
+        # 两者不是同一个东西，比较结果恒为"有新版本"，于是每次启动都弹一次
+        # 上游的更新窗 —— 对使用者来说既无关，也无从按它去更新本程序。
+        #
+        # 需要更新时用设置页的"检查更新"手动触发，或直接跟上游仓库同步代码
+        if not manual:
+            return
+
         worker = UpdateCheckWorker(config.get(config.include_prerelease), get_ui_language(), manual)
         worker.success.connect(self.check)
         worker.error.connect(self.on_error)

@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 MEDIA_EXTENSIONS = {".mp4", ".mkv", ".flv", ".mov", ".avi", ".webm", ".m4v", ".ts"}
 
+# 子进程用这个前缀给出可直接展示的失败原因（见 worker.py，两边必须一致）
+ERROR_PREFIX = "ERROR: "
+
 
 class TranscribeTaskManager(QObject):
     def __init__(self):
@@ -245,6 +248,7 @@ class TranscribeTaskManager(QObject):
             model_path = self._resolve_model_argument(),
             output_dir = str(video_path.parent),
             language = config.get(config.transcribe_language),
+            device = config.get(config.transcribe_device),
             parent = self
         )
         runner.output.connect(lambda text, task_id = task.id: self._on_output(task_id, text))
@@ -301,13 +305,24 @@ class TranscribeTaskManager(QObject):
             task.completed_time = get_timestamp()
         else:
             task.status = TranscribeStatus.FAILED
-            task.error_message = f"转录进程退出码：{exit_code}"
+            task.error_message = self._resolve_error_message(task, exit_code)
 
         task.updated_time = get_timestamp()
         self.db.upsert(task)
         signal_bus.transcribe.task_updated.emit(task)
         signal_bus.transcribe.tasks_changed.emit()
         QTimer.singleShot(0, signal_bus.transcribe.schedule.emit)
+
+    def _resolve_error_message(self, task: TranscribeTaskInfo, exit_code: int):
+        # 子进程会用 ERROR_PREFIX 打一行人能读懂的原因（如显卡不可用、模型下载失败），
+        # 有就直接拿它当错误信息；没有时才退回退出码 —— "退出码：1"对用户毫无信息量
+        for line in reversed(task.log_tail.splitlines()):
+            line = line.strip()
+
+            if line.startswith(ERROR_PREFIX):
+                return line[len(ERROR_PREFIX):].strip()
+
+        return f"转录进程退出码：{exit_code}"
 
     def _resolve_video_paths(self, task_info: TaskInfo):
         base_dir = Path(task_info.File.download_path or config.get(config.download_path), task_info.File.folder)

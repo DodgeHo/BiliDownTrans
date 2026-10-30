@@ -17,6 +17,7 @@ class TranscribeRunner(QObject):
         model_path: str,
         output_dir: str,
         language: str,
+        device: str = "auto",
         parent = None
     ):
         super().__init__(parent)
@@ -27,6 +28,7 @@ class TranscribeRunner(QObject):
         self.model_path = model_path
         self.output_dir = output_dir
         self.language = language
+        self.device = device
         self.canceled = False
         self.process = QProcess(self)
 
@@ -65,7 +67,9 @@ class TranscribeRunner(QObject):
             "--output-dir",
             self.output_dir,
             "--language",
-            self.language
+            self.language,
+            "--device",
+            self.device
         ])
 
         env = QProcessEnvironment.systemEnvironment()

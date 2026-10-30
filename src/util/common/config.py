@@ -310,12 +310,12 @@ class DefaultValue:
 class APPConfig(QConfig):
     # APP
     app_name = "BiliDownTrans"
-    app_version = "0.1.0"
-    app_comparable_version = "0.1.0"
+    app_version = "0.1.1"
+    app_comparable_version = "0.1.1"
     # 配置格式版本。**改动必须在 patch_config 里加对应的门禁并把它 +1**，
     # 否则已有用户配置里那份副本永远不会被更新（DefaultValue 只在配置文件不存在时
     # 作为初值）。与 app_version 不要求逐字对应
-    app_config_version = 2202
+    app_config_version = 2203
     config_version = ConfigItem("Application", "config_version", app_config_version)
 
     # Interface
@@ -368,6 +368,13 @@ class APPConfig(QConfig):
     transcribe_model_repo = ConfigItem("Transcribe", "transcribe_model_repo", "Systran/faster-whisper-large-v3")
     transcribe_language = ConfigItem("Transcribe", "transcribe_language", "zh")
     transcribe_parallel = RangeConfigItem("Transcribe", "transcribe_parallel", 1, RangeValidator(1, 4))
+
+    # 转录设备策略：
+    #   auto —— 有可用的 NVIDIA 显卡就用 GPU，没有（例如笔记本电池供电把独显整个断掉）
+    #           就退回 CPU，慢但能出字幕
+    #   cuda —— 强制 GPU，看不到显卡直接报错，不静默降级
+    #   cpu  —— 强制 CPU
+    transcribe_device = ConfigItem("Transcribe", "device", "auto")
 
     # 任务级自动重试（Issue #469）。只对网络类可重试错误生效，403/404 这类永久错误
     # 仍直接进终态，因此默认开启是安全的 —— 网络差的用户不必先去设置里找开关。
@@ -623,6 +630,10 @@ def patch_config(config_version: int, data: dict):
         config.set(config.transcribe_script_path, "", save = False)
         config.set(config.transcribe_model_path, "", save = False)
         config.set(config.transcribe_model_repo, "Systran/faster-whisper-large-v3", save = False)
+
+    if config_version < 2203:
+        # 转录设备策略。默认 auto：GPU 不可用时退回 CPU 出结果，而不是直接失败
+        config.set(config.transcribe_device, "auto", save = False)
 
     # 完成修补，写入新的 config_version
     config.set(config.config_version, config.app_config_version)

@@ -6,4 +6,15 @@ PySide6==6.10.3
 httpx==0.28.1
 psutil==7.2.2
 faster-whisper==1.2.1
+# faster-whisper 只声明 av>=11，没有上限。av 19 移除了 av.open() 的
+# metadata_errors 参数，而 faster_whisper/audio.py:46 仍在传它，
+# 装到新版会直接 TypeError 让转录子进程以退出码 1 失败
+av==16.1.0
 huggingface_hub==0.36.2
+verhub-sdk==0.2.10
+# Windows GPU 转录需要 cuBLAS 与 CUDA Runtime：ctranslate2 的 wheel 自带 cuDNN，
+# 但不带这两个，官方要求本机装 CUDA Toolkit。改用 PyPI 的可再发行包，
+# 由 transcribe/worker.py 的 _register_cuda_dll_dirs() 在加载 ctranslate2 前装入进程
+# （nvidia-cuda-nvrtc-cu12 会随 cublas 自动带出）
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cuda-runtime-cu12==12.9.79

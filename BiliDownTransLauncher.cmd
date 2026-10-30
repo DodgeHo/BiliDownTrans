@@ -1,6 +1,12 @@
 @echo off
 setlocal
 
+rem ±¾ÎÄ¼ş±ØĞëÊÇ CRLF »»ĞĞ + GBK(´úÂëÒ³ 936) ±àÂë¡£
+rem cmd.exe °´×Ö½Ú¶¨Î»ÕıÔÚÖ´ĞĞµÄÅú´¦Àí£ºLF-only »»ĞĞ»áÈÃËü°ÑÏÂÒ»ĞĞµÄ¿ªÍ·
+rem ½Óµ½±¾ĞĞÄ©Î²£¬ÃüÁî±»´ÓÖĞ¼ä½Ø¶Ï£¬±íÏÖÎª "ÏµÍ³ÕÒ²»µ½Ö¸¶¨µÄÂ·¾¶" Íâ¼Ó
+rem Ò»´® 'f' / 'el' / 'nul' / 'w.exe"' ²»ÊÇÄÚ²¿»òÍâ²¿ÃüÁî¡£
+rem Í¬Àí²»ÒªÔÚ½Å±¾Àï chcp 65001£ºÇĞ»»´úÂëÒ³ºó cmd »á°´×Ö·ûÖØËãÎÄ¼şÎ»ÖÃ£¬Í¬ÑùµÄ´íÎ»¡£
+
 set "ROOT=%~dp0"
 set "VENV=%ROOT%.venv"
 set "PY=%VENV%\Scripts\python.exe"
@@ -11,11 +17,13 @@ if exist "%PY%" (
     if not errorlevel 1 goto start_app
 )
 
-echo æ­£åœ¨å‡†å¤‡ BiliDownTrans è¿è¡Œç¯å¢ƒï¼Œé¦–æ¬¡å¯åŠ¨å¯èƒ½éœ€è¦å‡ åˆ†é’Ÿ...
+echo ÕıÔÚ×¼±¸ BiliDownTrans ÔËĞĞ»·¾³£¬Ê×´ÎÆô¶¯¿ÉÄÜĞèÒª¼¸·ÖÖÓ...
 
 where uv >nul 2>nul
 if not errorlevel 1 (
-    uv venv "%VENV%" --python 3.12
+    rem ²»Ëø Python °æ±¾£ºuv »áÌô±¾»ú¿ÉÓÃµÄ 64 Î»½âÊÍÆ÷¡£
+    rem Èô»úÆ÷ÉÏ×°µÄÊÇ 32 Î» Python£¬PySide6 Ã»ÓĞ win32 wheel£¬°²×°±ØÈ»Ê§°Ü
+    uv venv "%VENV%"
     if errorlevel 1 goto fallback_venv
     uv pip install --python "%PY%" -r "%ROOT%requirements.txt"
     if errorlevel 1 goto install_failed
@@ -25,7 +33,7 @@ if not errorlevel 1 (
 :fallback_venv
 where py >nul 2>nul
 if not errorlevel 1 (
-    py -3.12 -m venv "%VENV%" 2>nul || py -3 -m venv "%VENV%"
+    py -3.13 -m venv "%VENV%" 2>nul || py -3 -m venv "%VENV%"
 ) else (
     python -m venv "%VENV%"
 )
@@ -41,7 +49,8 @@ exit /b 0
 
 :install_failed
 echo.
-echo è¿è¡Œç¯å¢ƒå‡†å¤‡å¤±è´¥ã€‚è¯·ç¡®è®¤å·²å®‰è£… Python 3.11+ï¼Œå¹¶æ£€æŸ¥ç½‘ç»œæ˜¯å¦å¯ä»¥ä¸‹è½½ä¾èµ–ã€‚
-echo ä½ ä¹Ÿå¯ä»¥åœ¨æœ¬ç›®å½•æ‰‹åŠ¨è¿è¡Œï¼špip install -r requirements.txt
+echo ÔËĞĞ»·¾³×¼±¸Ê§°Ü¡£ÇëÈ·ÈÏÒÑ°²×° Python 3.11+£¬²¢¼ì²éÍøÂçÊÇ·ñ¿ÉÒÔÏÂÔØÒÀÀµ¡£
+echo ÄãÒ²¿ÉÒÔÔÚ±¾Ä¿Â¼ÊÖ¶¯ÔËĞĞ£ºpip install -r requirements.txt
+echo ÈÕÖ¾Ä¿Â¼£º%APPDATA%\BiliDownTrans\logs
 pause
 exit /b 1
