@@ -31,7 +31,15 @@ $exclude = @(
     "build-release",
     "dist-portable",
     "release",
-    "test"
+    "test",
+    # 误建在项目根目录的虚拟环境与本地工作数据：打进包里就是几百 MB 垃圾。
+    # 真正的运行环境由启动脚本按需创建，不随分发包带走
+    "Include",
+    "Lib",
+    "pyvenv.cfg",
+    ".workbuddy",
+    ".pytest_cache",
+    ".ruff_cache"
 )
 
 Get-ChildItem -LiteralPath $root -Force | Where-Object {
